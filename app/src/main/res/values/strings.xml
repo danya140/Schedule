@@ -5,6 +5,7 @@
     <string name="login_text">Логин</string>
     <string name="pass_text">Пароль</string>
     <string name="auth_button_text">Войти</string>
+    <string name="del_button_text">Delete</string>
     <!--Res for main activity -->
     <string name="test_text">Test</string>
 </resources>

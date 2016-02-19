@@ -7,7 +7,8 @@
     <TextView android:text="@string/welcom_auth_msg" android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dp"
-        android:textSize="18dp" android:gravity="center_horizontal"/>
+        android:textSize="18dp" android:gravity="center_horizontal"
+        android:id="@+id/tester_auth"/>
 
     <EditText
         android:layout_width="match_parent"
@@ -32,4 +33,10 @@
         android:id="@+id/auth_button"
         android:layout_marginTop="30dp"
         android:text="@string/auth_button_text"/>
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/del_button"
+        android:layout_marginTop="30dp"
+        android:text="@string/del_button_text"/>
 </LinearLayout>

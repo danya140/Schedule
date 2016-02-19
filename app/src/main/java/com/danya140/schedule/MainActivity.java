@@ -5,7 +5,10 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.TextView;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.InputStreamReader;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -14,17 +17,17 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        if(checkFile()){
+        try{
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    openFileInput(Constants.FILE)));
+
             Intent schedule = new Intent(this,ScheduleActivity.class);
             startActivity(schedule);
-        } else {
+
+        } catch (FileNotFoundException ex){
             Intent login = new Intent(this,AuthActivity.class);
             startActivity(login);
         }
     }
 
-    private boolean checkFile(){
-        File auth= new File(Constants.FILE);
-        return auth.exists();
-    }
 }
