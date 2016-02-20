@@ -1,6 +1,5 @@
 package com.danya140.schedule.Logic;
 
-import android.os.AsyncTask;
 
 import com.danya140.schedule.ScheduleActivity;
 
@@ -145,11 +144,11 @@ public class Parser {
         schedule = new Info[6][6];
     }
 
-    protected static int getWEEK() {
+    public static int getWEEK() {
         return WEEK;
     }
 
-    protected static String[] getDays (String[] day, String[] dayDate){
+    public static String[] getDays (String[] day, String[] dayDate){
         String[] days = new String[6];
         int c = 0;
 
