@@ -7,9 +7,11 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import org.jsoup.Jsoup;
+import com.danya140.schedule.Logic.GetShedule;
+import com.danya140.schedule.Logic.Parser;
 
-import java.io.IOException;
+import org.jsoup.nodes.Document;
+
 
 /**
  * Created by Данил on 19.02.2016.
@@ -17,8 +19,12 @@ import java.io.IOException;
 public class ScheduleActivity extends AppCompatActivity{
 
     private Button mDelButton;
-    private TextView mTrest;
+    private static TextView mTrest;
     private String str;
+
+
+    static Parser parser = new Parser();
+    public static Document doc;
 
 
     @Override
@@ -28,37 +34,9 @@ public class ScheduleActivity extends AppCompatActivity{
 
         mTrest = (TextView) findViewById(R.id.textView);
 
-        /*Thread downloadThread = new Thread(){
-            public void run(){
-                try {
-                    mTrest.setText(Jsoup.connect("http://cabinet.sut.ru/").get().toString());
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        };*/
+        GetShedule gts= new GetShedule();
+        gts.execute();
 
-
-        class Task extends AsyncTask<Void,Void,Void>{
-            @Override
-            protected Void doInBackground(Void... params) {
-                try {
-                    str = Jsoup.connect("http://cabinet.sut.ru/").get().toString();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                return null;
-            }
-
-            @Override
-            protected void onPostExecute(Void aVoid) {
-                super.onPostExecute(aVoid);
-                ScheduleActivity.this.update(str);
-            }
-        }
-
-        Task mt =new Task();
-        mt.execute();
 
         mDelButton = (Button)findViewById(R.id.del_schedule_button);
         mDelButton.setOnClickListener(new View.OnClickListener() {
@@ -69,7 +47,12 @@ public class ScheduleActivity extends AppCompatActivity{
         });
     }
 
-    public void update(String text){
-        mTrest.setText(text);
+    public static void update(String finaldoc){
+        mTrest.setText(finaldoc);
     }
+
+    public static void parsing(){
+        parser.parse(doc);
+    }
+
 }
