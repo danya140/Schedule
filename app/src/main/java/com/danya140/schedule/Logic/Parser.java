@@ -34,7 +34,7 @@ public class Parser {
 
         parseForDays();
 
-        ScheduleActivity.update(finaldoc);
+        //ScheduleActivity.update(finaldoc);
 
         return schedule;
     }

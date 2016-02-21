@@ -1,5 +1,7 @@
+/*
 package com.danya140.schedule.Logic;
 
+import android.content.Intent;
 import android.os.AsyncTask;
 
 import com.danya140.schedule.ScheduleActivity;
@@ -11,13 +13,16 @@ import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.util.Map;
 
+*/
 /**
  * Created by Данил on 20.02.2016.
- */
+ *//*
+
 public class GetShedule extends AsyncTask<Document,Document,Document> {
 
     public Document documents;
     public String string;
+    public Intent schedule;
 
     @Override
     protected Document doInBackground(Document... params) {
@@ -59,6 +64,7 @@ public class GetShedule extends AsyncTask<Document,Document,Document> {
     @Override
     protected void onPostExecute(Document document) {
         super.onPostExecute(document);
-        ScheduleActivity.parsing();
+        ScheduleActivity.doc = document;
     }
 }
+*/

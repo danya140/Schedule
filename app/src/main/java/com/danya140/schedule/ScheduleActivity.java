@@ -1,19 +1,31 @@
 package com.danya140.schedule;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.text.Html;
-import android.view.View;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.HorizontalScrollView;
+import android.widget.LinearLayout;
+import android.widget.TableLayout;
+import android.widget.TableRow;
 import android.widget.TextView;
 
 import com.danya140.schedule.Logic.DayWeek;
-import com.danya140.schedule.Logic.GetShedule;
 import com.danya140.schedule.Logic.Info;
 import com.danya140.schedule.Logic.Parser;
 
+import org.jsoup.Connection;
+import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+
+import java.io.IOException;
+import java.util.Map;
 
 
 /**
@@ -22,11 +34,10 @@ import org.jsoup.nodes.Document;
 public class ScheduleActivity extends AppCompatActivity{
 
     private Button mDelButton;
-    private static TextView mTrest;
+    private static EditText mTrest;
     private static WebView mWebView;
 
     static Parser parser = new Parser();
-    static GetShedule gts= new GetShedule();
 
     public static Document doc;
     protected static Info [][] schedule = new Info[6][6];
@@ -40,15 +51,13 @@ public class ScheduleActivity extends AppCompatActivity{
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.avtivity_schedule);
+        //setContentView(R.layout.avtivity_schedule);
 
-        //mTrest = (TextView) findViewById(R.id.textView);
-        mWebView =(WebView) findViewById(R.id.web);
-
+        //mTrest = (EditText) findViewById(R.id.textView);
 
         getDayDate();
+        GetShedule gts = new GetShedule();
         gts.execute();
-
 
         /*mDelButton = (Button)findViewById(R.id.del_schedule_button);
         mDelButton.setOnClickListener(new View.OnClickListener() {
@@ -74,42 +83,131 @@ public class ScheduleActivity extends AppCompatActivity{
         schedule=parser.parse(doc);
         WEEK = parser.getWEEK();
         days = parser.getDays(day, dayDate);
-        mWebView.getSettings().setJavaScriptEnabled(true);
-        mWebView.loadData(formHtml(),"text/html","CP-1251");
+        //update("test");
+
     }
 
-    private static String formHtml(){
-        String table="<!--<!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">--><!DOCTYPE html><html><!--html xmlns=\"http://www.w3.org/1999/xhtml\">-->\n<table border=\"1\">\n";
-        table+="\n <head>\n" +
-                "    <meta content=\"text/html; charset=windows-1251\" http-equiv=\"Content-Type\"/>  </head> ";
-        for (int d = 0; d < days.length; d++) {
+    public void createLayout(){
+
+        LinearLayout layout = new LinearLayout(this);
+        layout.setOrientation(LinearLayout.VERTICAL);
+
+        /*TableLayout tableLayout = new TableLayout(this);*/
+
+        layout = createDaysInLayout(layout);
+        /*tableLayout.setStretchAllColumns(true);
+        tableLayout.setShrinkAllColumns(true);
+        tableLayout.setLayoutParams(new TableLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));*/
+
+        //layout.addView(tableLayout);
+        layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+        HorizontalScrollView scrollView  =new HorizontalScrollView(this);
+        scrollView.addView(layout);
+        setContentView(scrollView);
+    }
+
+    LinearLayout createDaysInLayout(LinearLayout layout){
+
+        for (int d = 0; d < schedule.length; d++) {
             if (schedule[d]==null){break;}
+            LinearLayout daysLayout = new LinearLayout(this);
+            daysLayout.setOrientation(LinearLayout.HORIZONTAL);
 
-            for (int i = 0; i < schedule.length; i++) {
+            TextView day = new TextView(this);
+            day.setText("Monday");
+
+            daysLayout.addView(day);
+
+            LinearLayout infosLayout = new LinearLayout(this);
+            infosLayout.setOrientation(LinearLayout.VERTICAL);
+
+
+
+            for (int i = 0; i <schedule[0].length; i++) {
                 if(schedule[d][i]==null){continue;}
+                TableRow infoLayout = new TableRow(this);
 
-                table+="<tr>\n";
-                if(i==0){table+="<td rowspan=\""+getLength(schedule[d])+"\">"+days[d]+"</td>\n";}
+                TextView time = new TextView(this);
+                TextView name= new TextView(this);
+                TextView teacher = new TextView(this);
+                TextView classRoom = new TextView(this);
 
-                table+="<td align=\"center\" style=\"font-size: 10px;\">"+schedule[d][i].getTIME()+schedule[d][i].getNUMBER()+"</td>\n";
-                table+="<td align=\"center\" style=\"font-size: 10px;\">"+schedule[d][i].getNAME()+"</td>\n";
-                table+="<td align=\"center\" style=\"font-size: 10px;\">"+schedule[d][i].getTeacherName()+"</td>\n";
-                table+="<td align=\"center\" style=\"font-size: 10px;\">"+schedule[d][i].getCLASSROOM()+"</td>\n";
-                table+="</tr>\n";
+                time.setText(schedule[d][i].getTIME());
+                name.setText(schedule[d][i].getNAME());
+                teacher.setText(schedule[d][i].getTeacherName());
+                classRoom.setText(schedule[d][i].getCLASSROOM());
+
+                infoLayout.addView(time);
+                infoLayout.addView(name);
+                infoLayout.addView(teacher);
+                infoLayout.addView(classRoom);
+
+                infoLayout.setLayoutParams(new TableRow.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+                infosLayout.addView(infoLayout);
             }
+
+            infosLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            daysLayout.addView(infosLayout);
+
+            daysLayout.setLayoutParams(new LinearLayout.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
+
+            layout.addView(daysLayout);
         }
-        table+="</table>\n</html>";
-        return table;
+
+
+        return layout;
     }
 
-    private static int getLength(Info[] schedule){
-        int length=0;
-        for (int i = 0; i < schedule.length; i++) {
-            if(schedule[i]!=null){
-                length++;
+    class GetShedule extends AsyncTask<Document,Document,Document> {
+
+        //public Document documents;
+        public String string;
+        public Intent schedule;
+
+        @Override
+        protected Document doInBackground(Document... params) {
+            try{
+                ScheduleActivity.this.doc = getHtml("daniilhacker@mail.ru","199617");
+
+            } catch (IOException ex){
+
             }
+
+            return doc;
         }
-        return length;
+
+        private Document getHtml(String login,String pass) throws IOException{
+            Document doc = Jsoup.connect("http://cabinet.sut.ru/raspisanie")
+                    .timeout(0)
+                    .cookies(getCookies(login,pass))
+                    .referrer("http://www.google.com")
+                    .get();
+            return doc;
+        }
+
+        private Map<String,String> getCookies(String login, String password) throws IOException{
+            Connection.Response res = Jsoup.connect("http://cabinet.sut.ru/login")
+                    .data("login", login)
+                    .data("password", password)
+                    .data("submit", "�����")
+                    .referrer("http://www.google.com")
+                    .method(Connection.Method.POST)
+                    .timeout(0)
+                    .execute();
+
+            Map<String,String> loginCookies = res.cookies();
+
+            return loginCookies;
+        }
+
+        @Override
+        protected void onPostExecute(Document document) {
+            super.onPostExecute(document);
+            ScheduleActivity.this.parsing();
+            ScheduleActivity.this.createLayout();
+        }
     }
 
 }
