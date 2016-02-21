@@ -1,13 +1,9 @@
 package com.danya140.schedule;
 
-import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.ViewGroup;
-import android.webkit.WebView;
-import android.widget.Button;
-import android.widget.EditText;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
 import android.widget.TableRow;
@@ -30,19 +26,16 @@ import java.util.Map;
  */
 public class ScheduleActivity extends AppCompatActivity{
 
-    private Button mDelButton;
-    private static EditText mTrest;
-    private static WebView mWebView;
-
     static Parser parser = new Parser();
 
-    public static Document doc;
+
     protected static Info [][] schedule = new Info[6][6];
     protected static DayWeek dw = new DayWeek();
     static int WEEK=0;
     static String[] days;
     static String[] day = {"Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"};
     static String[] dayDate = new String[6];
+    public static Document doc;
 
 
     @Override
@@ -52,14 +45,6 @@ public class ScheduleActivity extends AppCompatActivity{
         getDayDate();
         GetShedule gts = new GetShedule();
         gts.execute();
-
-        /*mDelButton = (Button)findViewById(R.id.del_schedule_button);
-        mDelButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                deleteFile(Constants.FILE);
-            }
-        });*/
     }
 
 
@@ -148,10 +133,6 @@ public class ScheduleActivity extends AppCompatActivity{
 
     class GetShedule extends AsyncTask<Document,Document,Document> {
 
-        //public Document documents;
-        public String string;
-        public Intent schedule;
-
         @Override
         protected Document doInBackground(Document... params) {
             try{
@@ -160,7 +141,6 @@ public class ScheduleActivity extends AppCompatActivity{
             } catch (IOException ex){
 
             }
-
             return doc;
         }
 
@@ -191,9 +171,20 @@ public class ScheduleActivity extends AppCompatActivity{
         @Override
         protected void onPostExecute(Document document) {
             super.onPostExecute(document);
-            ScheduleActivity.this.parsing();
-            ScheduleActivity.this.createLayout();
+            if(ScheduleActivity.doc==null){
+
+            } else{
+                ScheduleActivity.this.parsing();
+                ScheduleActivity.this.createLayout();
+            }
+
         }
     }
 
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //TODO: create saving function for offline using
+
+    }
 }

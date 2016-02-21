@@ -1,6 +1,7 @@
 package com.danya140.schedule;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
@@ -39,8 +40,10 @@ public class AuthActivity extends AppCompatActivity {
             public void onClick(View v) {
                 mLoginString = mLoginView.getText().toString();
                 mPassString = mPassView.getText().toString();
-                mTester.setText(mLoginString+mPassString);
-                AuthActivity.this.saveAuthInf(mLoginString,mPassString);
+                mTester.setText(mLoginString + mPassString);
+                AuthActivity.this.saveAuthInf(mLoginString, mPassString);
+                Intent schedule = new Intent(AuthActivity.this,ScheduleActivity.class);
+                startActivity(schedule);
             }
         });
 
