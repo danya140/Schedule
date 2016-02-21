@@ -34,8 +34,6 @@ public class Parser {
 
         parseForDays();
 
-        //ScheduleActivity.update(finaldoc);
-
         return schedule;
     }
 
@@ -148,7 +146,8 @@ public class Parser {
         return WEEK;
     }
 
-    public static String[] getDays (String[] day, String[] dayDate){
+    public static String[] getDays(Document doc, String[] day, String[] dayDate){
+        document = doc.outerHtml();
         String[] days = new String[6];
         int c = 0;
 

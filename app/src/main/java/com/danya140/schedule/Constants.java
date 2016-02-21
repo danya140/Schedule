@@ -11,4 +11,5 @@ import java.io.File;
 public class Constants {
 
     protected static final String FILE = "auth.inf";
+    protected static final int PADDING = 3;
 }
