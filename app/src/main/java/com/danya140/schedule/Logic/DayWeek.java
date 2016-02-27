@@ -33,4 +33,14 @@ public class DayWeek {
         int dayOfWeek= newCal.get( Calendar.DAY_OF_WEEK )-2;
         return dayOfWeek;
     }
+
+    public boolean isMonday(){
+        boolean monday=false;
+
+        if(newCal.get(Calendar.DAY_OF_WEEK)==1){
+            monday=true;
+        }
+
+        return monday;
+    }
 }

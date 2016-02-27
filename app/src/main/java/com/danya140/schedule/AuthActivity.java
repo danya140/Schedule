@@ -41,7 +41,7 @@ public class AuthActivity extends AppCompatActivity {
                 mLoginString = mLoginView.getText().toString();
                 mPassString = mPassView.getText().toString();
                 mTester.setText(mLoginString + mPassString);
-                AuthActivity.this.saveAuthInf(mLoginString, mPassString);
+                saveAuthInf(mLoginString, mPassString);
                 Intent schedule = new Intent(AuthActivity.this,ScheduleActivity.class);
                 startActivity(schedule);
             }

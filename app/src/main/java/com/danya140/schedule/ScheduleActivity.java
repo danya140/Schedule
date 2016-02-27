@@ -1,8 +1,10 @@
 package com.danya140.schedule;
 
+import android.content.Context;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Gravity;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -17,7 +19,12 @@ import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
+import java.io.BufferedReader;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.Map;
 
 
@@ -26,25 +33,40 @@ import java.util.Map;
  */
 public class ScheduleActivity extends AppCompatActivity{
 
-    static Parser parser = new Parser();
-
-
+    protected static Parser parser = new Parser();
     protected static Info [][] schedule = new Info[6][6];
     protected static DayWeek dw = new DayWeek();
-    static int WEEK=0;
-    static String[] days;
-    static String[] day = {"Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"};
-    static String[] dayDate = new String[6];
+    protected static int WEEK=0;
+    protected static String[] days;
+    protected static String[] day = {"Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"};
+    protected static String[] dayDate = new String[6];
     public static Document doc;
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
-        getDayDate();
+        try{
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    openFileInput(Constants.INFO_FILE)));
+
+            if(dw.isMonday()){
+                getDayDate();
+                GetShedule gts = new GetShedule();
+                gts.execute();
+            }
+            readInfo();
+            createLayout();
+
+        }catch (FileNotFoundException ex){
+            getDayDate();
+            GetShedule gts = new GetShedule();
+            gts.execute();
+        }
+
+        /*getDayDate();
         GetShedule gts = new GetShedule();
-        gts.execute();
+        gts.execute();*/
     }
 
 
@@ -55,15 +77,18 @@ public class ScheduleActivity extends AppCompatActivity{
     }
 
     public static void parsing(){
-        days = parser.getDays(doc,day, dayDate);
-        WEEK = parser.getWEEK();
+        days = parser.getDays(doc, day, dayDate);
         schedule=parser.parse(doc);
+        WEEK = parser.getWEEK();
     }
 
     public void createLayout(){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
 
+        TextView week = new TextView(this);
+        week.setText("Неделя № "+WEEK);
+        layout.addView(week);
         layout = createDaysInLayout(layout);
 
         layout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT));
@@ -79,19 +104,28 @@ public class ScheduleActivity extends AppCompatActivity{
             if (schedule[d]==null){break;}
             LinearLayout daysLayout = new LinearLayout(this);
             daysLayout.setOrientation(LinearLayout.HORIZONTAL);
+            daysLayout.setMinimumHeight(Constants.MIN_DAYS_HEIGHT);
+            daysLayout.setPadding(0, 0, 0, Constants.PADDING * 10);
 
             TextView day = new TextView(this);
             day.setText(days[d]);
-            day.setPadding(Constants.PADDING,Constants.PADDING,Constants.PADDING,Constants.PADDING*2);
+            day.setPadding(Constants.PADDING, Constants.PADDING, Constants.PADDING, Constants.PADDING * 2);
+            day.setLayoutParams(new ViewGroup.LayoutParams(Constants.DAY_WIDTH, ViewGroup.LayoutParams.FILL_PARENT));
+            day.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
 
             daysLayout.addView(day);
 
             LinearLayout infosLayout = new LinearLayout(this);
             infosLayout.setOrientation(LinearLayout.VERTICAL);
+            infosLayout.setMinimumHeight(Constants.MIN_DAYS_HEIGHT);
+            infosLayout.setGravity(Gravity.CENTER_VERTICAL);
 
             for (int i = 0; i <schedule[0].length; i++) {
                 if(schedule[d][i]==null){continue;}
                 TableRow infoLayout = new TableRow(this);
+                infoLayout.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.MATCH_PARENT));
+
+
 
                 TextView time = new TextView(this);
                 time.setPadding(Constants.PADDING+5,Constants.PADDING,Constants.PADDING,Constants.PADDING);
@@ -136,7 +170,8 @@ public class ScheduleActivity extends AppCompatActivity{
         @Override
         protected Document doInBackground(Document... params) {
             try{
-                ScheduleActivity.this.doc = getHtml("daniilhacker@mail.ru","199617");
+
+                ScheduleActivity.this.doc = getHtml(readAuthLogin(),readAuthPass());
 
             } catch (IOException ex){
 
@@ -172,7 +207,7 @@ public class ScheduleActivity extends AppCompatActivity{
         protected void onPostExecute(Document document) {
             super.onPostExecute(document);
             if(ScheduleActivity.doc==null){
-
+                connectionErr();
             } else{
                 ScheduleActivity.this.parsing();
                 ScheduleActivity.this.createLayout();
@@ -181,10 +216,122 @@ public class ScheduleActivity extends AppCompatActivity{
         }
     }
 
+    protected void connectionErr(){
+        TextView errText = new TextView(this);
+        errText.setText("Нет подключения к интернету");
+        errText.setTextSize(30f);
+        setContentView(errText);
+    }
+
     @Override
     protected void onPause() {
         super.onPause();
-        //TODO: create saving function for offline using
+        if(doc!=null){
+            saveInfo();
+        }
+    }
 
+    //File Worker
+
+    protected String readAuthLogin(){
+        String login = "";
+        try{
+            InputStream inputStream = openFileInput(Constants.FILE);
+            InputStreamReader isr = new InputStreamReader(inputStream);
+            BufferedReader reader = new BufferedReader(isr);
+
+            login=reader.readLine();
+        } catch (IOException e){
+
+        }
+
+        return login;
+    }
+    protected String readAuthPass(){
+        String pass = "";
+        try{
+            InputStream inputStream = openFileInput(Constants.FILE);
+            InputStreamReader isr = new InputStreamReader(inputStream);
+            BufferedReader reader = new BufferedReader(isr);
+
+            reader.readLine();
+            pass=reader.readLine();
+        } catch (IOException e){
+
+        }
+
+        return pass;
+    }
+
+    private void saveInfo(){
+        try {
+            FileOutputStream writer = openFileOutput(Constants.INFO_FILE, Context.MODE_PRIVATE);
+
+            writer.write(String.valueOf(WEEK).getBytes());
+            writer.write("\n".getBytes());
+
+            for (int d = 0; d < days.length; d++) {
+                writer.write(days[d].replaceAll("\n"," ").getBytes());
+                writer.write("!\n".getBytes());
+                if (schedule[d]==null){d++;}
+
+                for (int i = 0; i <schedule[0].length; i++) {
+                    if(schedule[d][i]==null){continue;}
+                    writer.write(schedule[d][i].saveString().getBytes());
+                }
+            }
+            writer.close();
+
+        } catch (IOException e){
+        }
+    }
+
+    private void readInfo(){
+        days = new String[6];
+        schedule = new Info[6][6];
+        try{
+            InputStream inputStream = openFileInput(Constants.INFO_FILE);
+            InputStreamReader isr = new InputStreamReader(inputStream);
+            BufferedReader reader = new BufferedReader(isr);
+            String line;
+            int d = -1;
+            int i = 0;
+
+            WEEK = Integer.parseInt(reader.readLine().trim());
+
+            while ((line=reader.readLine()) !=null){
+                if(line.contains("!")){
+                    //parse for days
+                    d++;
+                    i=0;
+                    days[d]=line.substring(0,line.indexOf('!'));
+                } else {
+                    //parse for info
+                    parseSavedInfo(line,d,i);
+                    i++;
+                }
+            }
+
+        } catch (IOException e){
+
+        }
+    }
+
+    private void parseSavedInfo(String line, int d, int i){
+        int idx;
+
+        idx = line.indexOf(";");
+        String time = line.substring(0,idx);
+        line = line.substring(idx+1, line.length());
+
+        idx = line.indexOf(";");
+        String name = line.substring(0, idx);
+        line = line.substring(idx+1, line.length());
+
+        idx = line.indexOf(";");
+        String tName = line.substring(0, idx);
+        line = line.substring(idx+1, line.length());
+
+        schedule[d][i]=new Info(time,name,tName,line);
     }
 }

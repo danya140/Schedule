@@ -22,32 +22,32 @@ public class Info {
         TIME = cleanTime(time.trim());
         NAME = name;
         TEACHER_NAME = teacher;
-        CLASSROOM = normalizeRoom(classroom);
+        CLASSROOM =classroom; //normalizeRoom(classroom);
         NUMBER="";
     }
 
-    protected void setTIME(String time){
+    public void setTIME(String time){
         TIME=time;
     }
 
-    protected void setNAME(String name){
+    public void setNAME(String name){
         NAME=name;
     }
 
-    protected void setTeacherName(String teacherName){
+    public void setTeacherName(String teacherName){
         TEACHER_NAME=teacherName;
     }
 
-    protected void setCLASSROOM(String classroom){
+    public void setCLASSROOM(String classroom){
         CLASSROOM=classroom;
     }
 
-    protected void setNUMBER(String NUMBER) {
+    public void setNUMBER(String NUMBER) {
         this.NUMBER = NUMBER;
     }
 
     public String getTIME() {
-        return TIME.substring(0,TIME.length()-1);
+        return TIME;
     }
 
     public String getNAME() {
@@ -91,9 +91,10 @@ public class Info {
     }
 
     private String cleanTime(String time){
-        time=time.replaceAll("\\(+\\w*+:+\\w*+-+\\w*+:+\\w*+\\)+.","");
+        time=time.replaceAll("\\(+\\w*+:+\\w*+-+\\w*+:+\\w*+\\)+.", "");
         return time;
     }
+
 
     public String toString() {
         return ("time: " + TIME + "\nName: " + NAME + "\nteacher name: " + TEACHER_NAME + "\naudit: " + CLASSROOM);
@@ -102,5 +103,9 @@ public class Info {
     public String outString(){
         findNumber();
         return (TIME+ " "+NAME+" "+"\n"+TEACHER_NAME+" "+CLASSROOM);
+    }
+
+    public String saveString(){
+        return TIME+";"+NAME+";"+TEACHER_NAME+" ;"+CLASSROOM+"\n";
     }
 }
