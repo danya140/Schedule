@@ -38,7 +38,7 @@ public class Parser {
     }
 
     protected static String getFrame(String document){
-        int startIndex=document.indexOf('№')-10;
+        int startIndex=document.indexOf('Н')-10;
         document=document.substring(startIndex);
         return document;
     }
@@ -153,7 +153,7 @@ public class Parser {
 
         for (int i = 0; i < day.length; i++) {
             if (document.contains(day[i])){
-                days[c]=day[i]+"\n"+dayDate[i];
+                days[c]=day[i];//+" \n"+dayDate[i]
                 c++;
             }
         }

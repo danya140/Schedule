@@ -80,9 +80,9 @@ public class Info {
                 str+=ch[i];
             }
             str+=corp;
-        }
+            return str;
+        } else {return classroom;}
 
-        return str;
     }
 
     private void findNumber(){

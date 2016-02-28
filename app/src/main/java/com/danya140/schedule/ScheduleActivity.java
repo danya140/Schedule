@@ -50,8 +50,8 @@ public class ScheduleActivity extends AppCompatActivity{
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     openFileInput(Constants.INFO_FILE)));
 
+            getDayDate();
             if(dw.isMonday() && isFirst()){
-                getDayDate();
                 GetShedule gts = new GetShedule();
                 gts.execute();
                 checkFile();
@@ -126,13 +126,25 @@ public class ScheduleActivity extends AppCompatActivity{
             daysLayout.setMinimumHeight(Constants.MIN_DAYS_HEIGHT);
             daysLayout.setPadding(0, 0, 0, Constants.PADDING * 10);
 
+            LinearLayout daynDate = new LinearLayout(this);
+            daynDate.setOrientation(LinearLayout.VERTICAL);
+
             TextView day = new TextView(this);
             day.setText(days[d]);
             day.setPadding(Constants.PADDING, Constants.PADDING, Constants.PADDING, Constants.PADDING * 2);
-            day.setLayoutParams(new ViewGroup.LayoutParams(Constants.DAY_WIDTH, ViewGroup.LayoutParams.FILL_PARENT));
+            day.setLayoutParams(new ViewGroup.LayoutParams(ViewGroup.LayoutParams.FILL_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
             day.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
 
-            daysLayout.addView(day);
+            TextView date = new TextView(this);
+            date.setText(dayDate[d]);
+            date.setPadding(Constants.PADDING, Constants.PADDING, Constants.PADDING, Constants.PADDING * 2);
+            date.setLayoutParams(new ViewGroup.LayoutParams(Constants.DAY_WIDTH + 20, ViewGroup.LayoutParams.FILL_PARENT));
+            date.setGravity(Gravity.CENTER_HORIZONTAL | Gravity.CENTER_VERTICAL);
+
+            daynDate.addView(day);
+            daynDate.addView(date);
+
+            daysLayout.addView(daynDate);
 
             LinearLayout infosLayout = new LinearLayout(this);
             infosLayout.setOrientation(LinearLayout.VERTICAL);
@@ -190,7 +202,7 @@ public class ScheduleActivity extends AppCompatActivity{
         protected Document doInBackground(Document... params) {
             try{
 
-                ScheduleActivity.this.doc = getHtml(readAuthLogin(),readAuthPass());
+                doc = getHtml(readAuthLogin(),readAuthPass());
 
             } catch (IOException ex){
 
@@ -228,8 +240,8 @@ public class ScheduleActivity extends AppCompatActivity{
             if(ScheduleActivity.doc==null){
                 connectionErr();
             } else{
-                ScheduleActivity.this.parsing();
-                ScheduleActivity.this.createLayout();
+                parsing();
+                createLayout();
             }
 
         }
@@ -293,6 +305,7 @@ public class ScheduleActivity extends AppCompatActivity{
             writer.write("\n".getBytes());
 
             for (int d = 0; d < days.length; d++) {
+                if(days[d]==null){continue;}
                 writer.write(days[d].replaceAll("\n"," ").getBytes());
                 writer.write("!\n".getBytes());
                 if (schedule[d]==null){d++;}
