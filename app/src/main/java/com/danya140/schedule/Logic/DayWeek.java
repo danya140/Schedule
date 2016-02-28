@@ -24,6 +24,11 @@ public class DayWeek {
         }
         day+=DAY-dayOfWeek();
 
+        if(day> newCal.getActualMaximum(Calendar.DAY_OF_MONTH)){
+            month++;
+            day=day-newCal.getActualMaximum(Calendar.DAY_OF_MONTH);
+        }
+
         date+=day+"."+month+"."+year;
 
         return date;
