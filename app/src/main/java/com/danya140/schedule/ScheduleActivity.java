@@ -40,7 +40,7 @@ public class ScheduleActivity extends AppCompatActivity{
     protected static String[] days;
     protected static String[] day = {"Понедельник","Вторник","Среда","Четверг","Пятница","Суббота"};
     protected static String[] dayDate = new String[6];
-    public static Document doc;
+    protected static Document doc;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,10 +50,12 @@ public class ScheduleActivity extends AppCompatActivity{
             BufferedReader reader = new BufferedReader(new InputStreamReader(
                     openFileInput(Constants.INFO_FILE)));
 
-            if(dw.isMonday()){
+            if(dw.isMonday() && isFirst()){
                 getDayDate();
                 GetShedule gts = new GetShedule();
                 gts.execute();
+                checkFile();
+
             }
             readInfo();
             createLayout();
@@ -69,6 +71,23 @@ public class ScheduleActivity extends AppCompatActivity{
         gts.execute();*/
     }
 
+    private void checkFile(){
+        try {
+            FileOutputStream writer = openFileOutput(Constants.FIRST, Context.MODE_PRIVATE);
+        } catch (FileNotFoundException e) {
+
+        }
+    }
+
+    private boolean isFirst(){
+        try{
+            BufferedReader reader = new BufferedReader(new InputStreamReader(
+                    openFileInput(Constants.FIRST)));
+            return false;
+        } catch (FileNotFoundException e){
+            return true;
+        }
+    }
 
     protected static void getDayDate(){
         for (int i = 0; i < dayDate.length; i++) {
@@ -228,6 +247,9 @@ public class ScheduleActivity extends AppCompatActivity{
         super.onPause();
         if(doc!=null){
             saveInfo();
+        }
+        if(dw.isTuesday()){
+            deleteFile(Constants.FIRST);
         }
     }
 

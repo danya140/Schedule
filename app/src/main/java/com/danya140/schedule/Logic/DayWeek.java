@@ -40,12 +40,18 @@ public class DayWeek {
     }
 
     public boolean isMonday(){
-        boolean monday=false;
-
-        if(newCal.get(Calendar.DAY_OF_WEEK)==1){
-            monday=true;
+        if(newCal.get(Calendar.DAY_OF_WEEK)==2){
+            return true;
+        } else {
+            return false;
         }
+    }
 
-        return monday;
+    public boolean isTuesday(){
+        if(newCal.get(Calendar.DAY_OF_WEEK)==3){
+            return true;
+        } else {
+            return false;
+        }
     }
 }

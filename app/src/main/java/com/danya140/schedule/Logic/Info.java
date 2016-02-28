@@ -22,7 +22,7 @@ public class Info {
         TIME = cleanTime(time.trim());
         NAME = name;
         TEACHER_NAME = teacher;
-        CLASSROOM =classroom; //normalizeRoom(classroom);
+        CLASSROOM =normalizeRoom(classroom);
         NUMBER="";
     }
 
@@ -70,7 +70,7 @@ public class Info {
     private String normalizeRoom(String classroom){
         String str="";
 
-        if(!classroom.isEmpty()){
+        if(!classroom.isEmpty() && !classroom.contains("/")){
             char[] ch = classroom.toCharArray();
 
             char corp = ch[ch.length-1];
