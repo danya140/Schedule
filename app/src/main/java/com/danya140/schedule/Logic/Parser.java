@@ -44,8 +44,8 @@ public class Parser {
     }
 
     protected static int getWeek(String document){
-        int week=0;
-        String str="";
+        int week;
+        String str;
         Scanner scnr = new Scanner(document);
         str=scnr.nextLine();
         str=str.substring(str.indexOf('№') + 1, str.indexOf('№') + 3);
@@ -71,8 +71,8 @@ public class Parser {
         clean();
 
 
-        int endIndex=document.lastIndexOf('#');
-        int startIndex=document.lastIndexOf('%');
+        int endIndex=document.lastIndexOf('%');
+        int startIndex=document.indexOf('%');
         document=document.substring(startIndex, endIndex);
 
         Scanner scnr = new Scanner(document);
@@ -146,17 +146,28 @@ public class Parser {
         return WEEK;
     }
 
-    public static String[] getDays(Document doc, String[] day, String[] dayDate){
+    public static String[][] getDays(Document doc, String[] day, String[] dayDate){
         document = doc.outerHtml();
-        String[] days = new String[6];
+        String[][] days = new String[2][6];
         int c = 0;
 
         for (int i = 0; i < day.length; i++) {
             if (document.contains(day[i])){
-                days[c]=day[i];//+" \n"+dayDate[i]
+                days[0][c]=day[i];
+                days[1][c]=dayDate[i];//+" \n"+dayDate[i]
                 c++;
             }
         }
         return days;
+    }
+
+    public static int nextWeek(Document doc){
+        int week;
+        String tmp;
+
+        tmp= String.valueOf(doc.outerHtml().charAt(doc.outerHtml().indexOf("?") + 6))+String.valueOf(doc.outerHtml().charAt(doc.outerHtml().indexOf("?") + 7));
+        week = Integer.parseInt(tmp);
+
+        return week;
     }
 }
