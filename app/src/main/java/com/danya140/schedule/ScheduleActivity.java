@@ -54,7 +54,8 @@ public class ScheduleActivity extends AppCompatActivity{
             if(dw.isMonday() && isFirst()){
                 GetShedule gts = new GetShedule();
                 gts.execute();
-                checkFile();
+//                checkFile();
+
 
             }
             readInfo();
