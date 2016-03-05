@@ -47,6 +47,7 @@ public class ScheduleActivity extends AppCompatActivity{
     protected static boolean isNextWeek = false;
     protected static boolean isFirst = true;
 
+    //Menu funcs
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
@@ -101,6 +102,7 @@ public class ScheduleActivity extends AppCompatActivity{
         WEEK = parser.getWEEK();
     }
 
+    //Layout manager
     public void createLayout(){
         LinearLayout layout = new LinearLayout(this);
         layout.setOrientation(LinearLayout.VERTICAL);
@@ -196,6 +198,7 @@ public class ScheduleActivity extends AppCompatActivity{
         return layout;
     }
 
+    //Internet thread
     class GetShedule extends AsyncTask<Document,Document,Document> {
 
         @Override

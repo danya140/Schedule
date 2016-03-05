@@ -70,7 +70,6 @@ public class Parser {
 
         clean();
 
-
         int endIndex=document.lastIndexOf('%');
         int startIndex=document.indexOf('%');
         document=document.substring(startIndex, endIndex);
