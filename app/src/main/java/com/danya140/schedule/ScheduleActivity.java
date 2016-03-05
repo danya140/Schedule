@@ -285,7 +285,6 @@ public class ScheduleActivity extends AppCompatActivity{
             deleteFile(Constants.FIRST);
         }
     }
-
     //File Worker
 
     protected String readAuthLogin(){

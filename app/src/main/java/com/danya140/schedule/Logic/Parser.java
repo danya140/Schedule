@@ -164,7 +164,6 @@ public class Parser {
     public static int nextWeek(Document doc){
         int week;
         String tmp;
-
         tmp= String.valueOf(doc.outerHtml().charAt(doc.outerHtml().indexOf("?") + 6))+String.valueOf(doc.outerHtml().charAt(doc.outerHtml().indexOf("?") + 7));
         week = Integer.parseInt(tmp);
 
