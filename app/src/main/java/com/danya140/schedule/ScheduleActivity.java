@@ -5,6 +5,8 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Gravity;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.HorizontalScrollView;
 import android.widget.LinearLayout;
@@ -43,6 +45,21 @@ public class ScheduleActivity extends AppCompatActivity{
     protected static Document doc;
 
     @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_main,menu);
+        return true;
+    }
+
+    public void onUpdateClick(MenuItem item){
+        GetShedule gts = new GetShedule();
+        gts.execute();
+    }
+
+    public void onNextWeek(MenuItem item){
+
+    }
+
+    @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
@@ -51,13 +68,6 @@ public class ScheduleActivity extends AppCompatActivity{
                     openFileInput(Constants.INFO_FILE)));
 
             getDayDate();
-            if(dw.isMonday() && isFirst()){
-                GetShedule gts = new GetShedule();
-                gts.execute();
-//                checkFile();
-
-
-            }
             readInfo();
             createLayout();
 
