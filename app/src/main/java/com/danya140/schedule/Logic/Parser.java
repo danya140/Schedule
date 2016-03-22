@@ -54,6 +54,11 @@ public class Parser {
     }
 
     protected static void clean(){
+        document=document.replaceAll(" \n" +
+                "       <tr style=\"background: #336666 !important; \">\n" +
+                "        <td colspan=\"5\"></td>\n" +
+                "       </tr> \n" +
+                "       ","");
         document=document.replaceAll("[a-zA-Z]*\"","");// del all words starting with = and end with "
         document=document.replaceAll("(style=font-size: 12px;|align|width|small|style|\\|)","");
         document=document.replaceAll("href+=*+\\w*+\\?+=?+\\w*","");
