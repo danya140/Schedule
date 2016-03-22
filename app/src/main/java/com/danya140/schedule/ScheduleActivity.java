@@ -45,7 +45,6 @@ public class ScheduleActivity extends AppCompatActivity{
     protected static Document doc;
     protected static int nextWeek;
     protected static boolean isNextWeek = false;
-    protected static boolean isFirst = true;
 
     //Menu funcs
     @Override
@@ -84,7 +83,6 @@ public class ScheduleActivity extends AppCompatActivity{
             GetShedule gts = new GetShedule();
             gts.execute();
         }
-
         /*getDayDate();
         GetShedule gts = new GetShedule();
         gts.execute();*/
@@ -204,11 +202,11 @@ public class ScheduleActivity extends AppCompatActivity{
         @Override
         protected Document doInBackground(Document... params) {
             try{
-                if(!isFirst){
+                if(isNextWeek){
+                    doc = getHtml(readAuthLogin(),readAuthPass());
+                    nextWeek = parser.nextWeek(doc)+2;
                     doc = getHtml(readAuthLogin(),readAuthPass(),nextWeek);
                 } else {
-                    isNextWeek = isFirst&isNextWeek;
-                    isFirst=false;
                     doc = getHtml(readAuthLogin(),readAuthPass());
                 }
 
@@ -219,22 +217,21 @@ public class ScheduleActivity extends AppCompatActivity{
         }
 
         private Document getHtml(String login,String pass) throws IOException{
-            Document doc = Jsoup.connect("http://cabinet.sut.ru/raspisanie")
+            return Jsoup.connect("http://cabinet.sut.ru/raspisanie")
                     .timeout(0)
                     .cookies(getCookies(login,pass))
                     .referrer("http://www.google.com")
                     .get();
-            return doc;
         }
 
         private Document getHtml(String login,String pass,int week) throws IOException{
             isNextWeek = false;
-            Document doc = Jsoup.connect("http://cabinet.sut.ru/raspisanie?week="+week)
+
+            return Jsoup.connect("http://cabinet.sut.ru/raspisanie?week="+week)
                     .timeout(0)
                     .cookies(getCookies(login,pass))
                     .referrer("http://www.google.com")
                     .get();
-            return doc;
         }
 
         private Map<String,String> getCookies(String login, String password) throws IOException{
@@ -258,15 +255,8 @@ public class ScheduleActivity extends AppCompatActivity{
             if(ScheduleActivity.doc==null){
                 connectionErr();
             } else{
-                nextWeek = parser.nextWeek(doc)+2;
-                if(isNextWeek){
-                    GetShedule gts = new GetShedule();
-                    gts.execute();
-                    this.cancel(false);
-                } else {
-                    parsing();
-                    createLayout();
-                }
+                parsing();
+                createLayout();
             }
         }
     }
@@ -283,9 +273,6 @@ public class ScheduleActivity extends AppCompatActivity{
         super.onPause();
         if(doc!=null){
             saveInfo();
-        }
-        if(dw.isTuesday()){
-            deleteFile(Constants.FIRST);
         }
     }
     //File Worker
