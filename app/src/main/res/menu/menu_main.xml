@@ -10,5 +10,10 @@
         android:orderInCategory="100"
         android:title="@string/menu_next_week"
         android:onClick="onNextWeek"/>
+    <item
+        android:id="@+id/abrev"
+        android:orderInCategory="100"
+        android:title="@string/abbrev"
+        android:onClick="onAbbrev"/>
 
 </menu>
