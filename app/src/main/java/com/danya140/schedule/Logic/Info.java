@@ -125,7 +125,6 @@ public class Info {
                 NAME+="(ЛАБ)";
             }
         }
-
     }
 
     public String toString() {
