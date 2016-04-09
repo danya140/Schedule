@@ -21,7 +21,7 @@ public class Info {
     public Info(String time,String name,String teacher,String classroom){
         TIME = cleanTime(time.trim());
         NAME = name;
-        TEACHER_NAME = teacher;
+        TEACHER_NAME = cleanTeacherName(teacher);
         CLASSROOM =normalizeRoom(classroom);
         NUMBER="";
     }
@@ -76,8 +76,8 @@ public class Info {
             char corp = ch[ch.length-1];
             ch[ch.length-1]='/';
 
-            for (int i = 0; i <ch.length; i++) {
-                str+=ch[i];
+            for (char aCh : ch) {
+                str += aCh;
             }
             str+=corp;
             return str;
@@ -87,7 +87,7 @@ public class Info {
 
     private void findNumber(){
         NUMBER= String.valueOf(TIME.charAt(0));
-        TIME=TIME.replaceFirst("\\d+\\s","");
+        TIME=TIME.replaceFirst("\\d+\\s", "");
     }
 
     private String cleanTime(String time){
@@ -95,6 +95,38 @@ public class Info {
         return time;
     }
 
+    private String cleanTeacherName(String teacher){
+        if(teacher.contains("("))
+        return teacher.substring(0,teacher.indexOf("("));
+        else return teacher;
+    }
+
+    public void abbrev(){
+        if(NAME.length()>30){
+            String tmp ="";
+            tmp+=NAME.charAt(0);
+            while(NAME.contains(" ") && (NAME.charAt(NAME.indexOf(" ")+1)!='(')){
+                tmp+=NAME.charAt(NAME.indexOf(" ")+1);
+                NAME=NAME.substring(NAME.indexOf(" ")+1);
+            }
+            String type=NAME.substring(NAME.indexOf("("),NAME.indexOf(")")+1);
+            NAME = tmp+type;
+        }
+        if(NAME.contains(")") && !(NAME.contains("Л") || NAME.contains("П"))){
+            String type = NAME.substring(NAME.indexOf("("),NAME.indexOf(")"));
+            NAME = NAME.substring(0,NAME.indexOf("("));
+            if(type.contains("лекция")){
+                NAME+="(ЛК)";
+            }
+            else if(type.contains("практика")){
+                NAME+="(ПР)";
+            }
+            else if(type.contains("лабораторная работа")){
+                NAME+="(ЛАБ)";
+            }
+        }
+
+    }
 
     public String toString() {
         return ("time: " + TIME + "\nName: " + NAME + "\nteacher name: " + TEACHER_NAME + "\naudit: " + CLASSROOM);

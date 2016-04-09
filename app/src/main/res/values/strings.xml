@@ -11,4 +11,5 @@
     <!--Res for menu -->
     <string name="menu_update">Обновить</string>
     <string name="menu_next_week">Следующая неделя</string>
+    <string name="menu_abbrev">Сокращать</string>
 </resources>

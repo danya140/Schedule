@@ -1,6 +1,7 @@
 package com.danya140.schedule;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -30,6 +31,7 @@ import java.io.InputStreamReader;
 import java.util.Map;
 
 
+
 /**
  * Created by Данил on 19.02.2016.
  */
@@ -45,6 +47,10 @@ public class ScheduleActivity extends AppCompatActivity{
     protected static Document doc;
     protected static int nextWeek;
     protected static boolean isNextWeek = false;
+    public static boolean abbr = false;
+    public static final String APP_PREFERENCES = "settings";
+    public static final String APP_PREFERENCES_ABBR = "abbr";
+    private SharedPreferences mSettings;
 
     //Menu funcs
     @Override
@@ -62,13 +68,34 @@ public class ScheduleActivity extends AppCompatActivity{
         isNextWeek = true;
         GetShedule gts = new GetShedule();
         gts.execute();
-
-
     }
+
+    public void onAbbrev(MenuItem item){
+        abbr = !abbr;
+        setAbbrev();
+        createLayout();
+    }
+
+    private void setAbbrev(){
+        for (int i=0; i<6; i++){
+            if(schedule[i]==null) continue;
+            for(int j =0; j<6; j++){
+                if(schedule[i][j]==null) continue;
+                schedule[i][j].abbrev();
+            }
+        }
+    }
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mSettings = getSharedPreferences(APP_PREFERENCES,Context.MODE_PRIVATE);
+
+        if(mSettings.contains(APP_PREFERENCES_ABBR)){
+            abbr = mSettings.getBoolean(APP_PREFERENCES_ABBR,false);
+        }
 
         try{
             BufferedReader reader = new BufferedReader(new InputStreamReader(
@@ -76,7 +103,11 @@ public class ScheduleActivity extends AppCompatActivity{
 
             getDayDate();
             readInfo();
+            if(abbr){
+                setAbbrev();
+            }
             createLayout();
+
 
         }catch (FileNotFoundException ex){
             getDayDate();
@@ -256,6 +287,9 @@ public class ScheduleActivity extends AppCompatActivity{
                 connectionErr();
             } else{
                 parsing();
+                if(abbr){
+                    setAbbrev();
+                }
                 createLayout();
             }
         }
@@ -274,6 +308,10 @@ public class ScheduleActivity extends AppCompatActivity{
         if(doc!=null){
             saveInfo();
         }
+
+        SharedPreferences.Editor editor = mSettings.edit();
+        editor.putBoolean(APP_PREFERENCES_ABBR,abbr);
+        editor.apply();
     }
     //File Worker
 
