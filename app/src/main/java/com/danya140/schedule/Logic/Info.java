@@ -112,7 +112,12 @@ public class Info {
             String type=NAME.substring(NAME.indexOf("("),NAME.indexOf(")")+1);
             NAME = tmp+type;
         }
-        if(NAME.contains(")") && !(NAME.contains("Л") || NAME.contains("П"))){
+        String t="";
+        if (NAME.contains("(")) {
+            t = NAME.substring(NAME.indexOf("("), NAME.indexOf(")"));
+        }
+
+        if(NAME.contains(")") && !(t.contains("Л") || t.contains("П"))){
             String type = NAME.substring(NAME.indexOf("("),NAME.indexOf(")"));
             NAME = NAME.substring(0,NAME.indexOf("("));
             if(type.contains("лекция")){
