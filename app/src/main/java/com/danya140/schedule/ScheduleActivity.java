@@ -248,7 +248,7 @@ public class ScheduleActivity extends AppCompatActivity{
         }
 
         private Document getHtml(String login,String pass) throws IOException{
-            return Jsoup.connect("http://cabinet.sut.ru/raspisanie")
+            return Jsoup.connect("https://cabinet.sut.ru/raspisanie")
                     .timeout(0)
                     .cookies(getCookies(login,pass))
                     .referrer("http://www.google.com")
@@ -258,7 +258,7 @@ public class ScheduleActivity extends AppCompatActivity{
         private Document getHtml(String login,String pass,int week) throws IOException{
             isNextWeek = false;
 
-            return Jsoup.connect("http://cabinet.sut.ru/raspisanie?week="+week)
+            return Jsoup.connect("https://cabinet.sut.ru/raspisanie?week="+week)
                     .timeout(0)
                     .cookies(getCookies(login,pass))
                     .referrer("http://www.google.com")
@@ -266,7 +266,7 @@ public class ScheduleActivity extends AppCompatActivity{
         }
 
         private Map<String,String> getCookies(String login, String password) throws IOException{
-            Connection.Response res = Jsoup.connect("http://cabinet.sut.ru/login")
+            Connection.Response res = Jsoup.connect("https://cabinet.sut.ru/login")
                     .data("login", login)
                     .data("password", password)
                     .data("submit", "�����")
